@@ -14,8 +14,8 @@ public class StockService {
     }
 
     // 재고 감소 메소드
-    @Transactional
-    public void decrease(Long id, Long quantity){
+    // @Transactional
+    public synchronized void decrease(Long id, Long quantity){
         /* 로직
         * stock repository를 활용하여 stock repository를 가져온 후에 (get stock)
         * 재고 감소
