@@ -8,6 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -38,5 +43,32 @@ public class StockServiceTest {
         // 로직대로라면 100 - 1 = 99개가 남아있어야 함
         Stock stock = stockRepository.findById(1L).orElseThrow();
         assertEquals(99, stock.getQuantity());
+    }
+
+    @Test
+    public void 동시에_100개_요청() throws InterruptedException {
+        int threadCount = 100; // 스레드 초기화
+        // 멀티스레드 사용
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        // excutorService: 비동기로 사용하는 작업을 단순화해서 사용할 수 있도록 도와주는 자바 API
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        // 다른 스레드에서 수행 중인 작업이 완료될 때까지 대기할 수 있도록 도와주는 클래스
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    stockService.decrease(1L, 1L);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        // 모든 요청이 완료되면 stockRepository를 활용하여 아이디를 가져온 다음에 값을 비교해줌
+        Stock stock = stockRepository.findById(1L).orElseThrow();
+        /*
+         * 예상 동작: 처음에 저장할 때 수량 100개 저장 -> 한개씩 100번을 감소 -> 0 예상
+         * */
+        assertEquals(0L, stock.getQuantity());
     }
 }
