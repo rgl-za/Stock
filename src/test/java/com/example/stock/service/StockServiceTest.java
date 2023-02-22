@@ -18,8 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class StockServiceTest {
 
+    // PessimisticLock
     @Autowired
-    private StockService stockService;
+    private PessimisticLockStockService stockService;
+
+    // 기본, Synchronized
+//    @Autowired
+//    private StockService stockService;
 
     @Autowired
     private StockRepository stockRepository;
