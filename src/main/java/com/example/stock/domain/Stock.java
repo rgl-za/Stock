@@ -19,6 +19,14 @@ public class Stock {
 
     }
 
+    // 재고 감소 메소드
+    public void decrease(Long quantity){
+        if(this.quantity - quantity < 0){
+            throw new RuntimeException("수량: 0개 미만 !!!");
+        }
+        this.quantity -= quantity;
+    }
+
     public Stock(Long productId, Long quantity){
         this.productId = productId;
         this.quantity = quantity;
@@ -28,11 +36,4 @@ public class Stock {
         return quantity;
     }
 
-    // 재고 감소 메소드
-    public void decrease(Long quantity){
-        if(this.quantity - quantity < 0){
-            throw new RuntimeException("수량: 0개 미만 !!!");
-        }
-        this.quantity = this.quantity - quantity;
-    }
 }
