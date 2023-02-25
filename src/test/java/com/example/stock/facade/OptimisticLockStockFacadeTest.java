@@ -14,7 +14,6 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @SpringBootTest
 class OptimisticLockStockFacadeTest {
     @Autowired
